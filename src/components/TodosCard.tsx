@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTodos } from "@/context/TodosProvider";
-import TodoCard from "@/components/TodoCard";
-import Loading from "@/app/loading";
 
-const TodosCard: any = () => {
+import Loading from "@/app/loading";
+import { useTodos, Todo } from "@/context/TodosProvider";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import TodoCard from "@/components/TodoCard";
+
+const TodosCard = () => {
   const { todos } = useTodos();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -18,11 +19,10 @@ const TodosCard: any = () => {
     fetchData();
   }, []);
 
-  const activeTodos = todos.filter((todo) => todo.completed === false);
-  const completedTodos = todos.filter((todo) => todo.completed === true);
-
-  // console.log("todos", todos);
-  // return;
+  const activeTodos: Todo[] = todos.filter((todo) => todo.completed === false);
+  const completedTodos: Todo[] = todos.filter(
+    (todo) => todo.completed === true
+  );
 
   return isLoading ? (
     <Loading />
@@ -35,7 +35,7 @@ const TodosCard: any = () => {
         </CardHeader>
         {activeTodos.length > 0 ? (
           <CardContent className="text-muted-foreground flex flex-col gap-4">
-            {activeTodos?.map((todo) => (
+            {activeTodos?.map((todo: any) => (
               <TodoCard key={todo.id} todo={todo} />
             ))}
           </CardContent>
@@ -49,7 +49,7 @@ const TodosCard: any = () => {
         </CardHeader>
         {completedTodos.length > 0 ? (
           <CardContent className="text-muted-foreground flex flex-col gap-4">
-            {completedTodos?.map((todo) => (
+            {completedTodos?.map((todo: any) => (
               <TodoCard key={todo.id} todo={todo} />
             ))}
           </CardContent>

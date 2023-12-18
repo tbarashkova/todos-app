@@ -3,11 +3,17 @@ import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useTodos } from "@/context/TodosProvider";
+
+import { useTodos, Todo } from "@/context/TodosProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import RHFCheckbox from "@/components/form/RHFCheckbox";
 import TodoDialog from "@/components/TodoDialog";
+
+interface TodoWithCompleted extends Todo {
+  completed: boolean;
+  createdTime: Date;
+}
 
 const schema = yup
   .object({
@@ -15,7 +21,7 @@ const schema = yup
   })
   .required();
 
-const TodoCard = ({ todo }) => {
+const TodoCard: React.FC<{ todo: TodoWithCompleted }> = ({ todo }) => {
   const { dispatch } = useTodos();
   const [open, setOpen] = useState(false); //to open view todo dialog
 
@@ -30,7 +36,7 @@ const TodoCard = ({ todo }) => {
     dispatch({ type: "DELETE_TODO", payload: { id: todo.id } });
   };
 
-  const handleToggleComplete = (data) => {
+  const handleToggleComplete = (data: yup.InferType<typeof schema>) => {
     // Dispatch an action to toggle the 'completed' status of the TODO
     if (data?.completed === false) {
       dispatch({
@@ -45,7 +51,7 @@ const TodoCard = ({ todo }) => {
         type: "TOGGLE_COMPLETE",
         payload: {
           id: todo.id,
-          completed: data.completed,
+          completed: data.completed ?? false,
           successTime: new Date(),
         },
       });
@@ -55,11 +61,7 @@ const TodoCard = ({ todo }) => {
   useEffect(() => {
     // If the 'completed' field changes, submit the form
     form.handleSubmit(handleToggleComplete)();
-    console.log("form has been submitted");
   }, [form.watch("completed")]); // Watch for changes in the 'completed' field
-
-  // console.log("values", form.watch());
-  // console.log("errors", form.formState.errors);
 
   return (
     <>

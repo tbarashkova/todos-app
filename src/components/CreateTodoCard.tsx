@@ -3,11 +3,12 @@ import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { v4 as uuidv4 } from "uuid";
+import { Toaster, toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTodos } from "@/context/TodosProvider";
-import { v4 as uuidv4 } from "uuid";
-import { Toaster, toast } from "sonner";
 
 const schema = yup
   .object({
@@ -51,7 +52,6 @@ const CreateTodoCard: any = ({ children }: { children: React.ReactNode }) => {
   });
 
   function handleAdd(data: any) {
-    console.log("data", data);
     data.id = uuidv4();
     data.createdTime = new Date();
     data.completed = false;
@@ -59,8 +59,6 @@ const CreateTodoCard: any = ({ children }: { children: React.ReactNode }) => {
     toast.success("Todo is successfully created");
     form.reset();
   }
-
-  // console.log("errors", form.formState.errors);
 
   return (
     <>

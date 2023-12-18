@@ -11,6 +11,14 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
+interface RHFTextareaProps {
+  title?: string;
+  name: string;
+  description?: string;
+  inputClassName?: string;
+  placeholder?: string;
+}
+
 export default function RHFTextarea({
   title,
   name,
@@ -18,7 +26,7 @@ export default function RHFTextarea({
   inputClassName,
   placeholder,
   ...other
-}) {
+}: RHFTextareaProps) {
   const { control } = useFormContext();
 
   return (

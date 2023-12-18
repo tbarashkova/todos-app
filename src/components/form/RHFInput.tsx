@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useFormContext } from "react-hook-form";
 import {
   FormControl,
@@ -28,6 +28,21 @@ export default function RHFInput({
   suffix,
   prefix,
   ...other
+}: {
+  title: string;
+  name: string;
+  description?: string;
+  inputClassName?: string;
+  placeholder: string;
+  className?: string;
+  type?: string;
+  required?: boolean;
+  endAdorment?: string;
+  pattern?: string;
+  thousandSeparator?: string;
+  allowLeadingZeros?: boolean;
+  suffix?: string;
+  prefix?: string;
 }) {
   const { control } = useFormContext();
 

@@ -1,18 +1,52 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  ReactNode,
+} from "react";
 
-const TodosContext = createContext();
+export interface Todo {
+  id: string;
+  name: string;
+  description: string;
+  estimatedTime: Date;
+  comment: string;
+  createdTime?: Date;
+  updatedTime?: Date;
+  successTime?: Date;
+  completed?: boolean;
+}
 
-export const useTodos = () => {
+interface TodosContextType {
+  todos: Todo[];
+  dispatch: React.Dispatch<TodoAction>;
+}
+
+type TodoAction =
+  | { type: "ADD_TODO"; payload: Todo }
+  | {
+      type: "TOGGLE_COMPLETE";
+      payload: { id: string; completed: boolean; successTime?: Date };
+    }
+  | { type: "UPDATE_TODO"; payload: Todo }
+  | { type: "DELETE_TODO"; payload: { id: string } };
+
+const TodosContext = createContext<TodosContextType | undefined>(undefined);
+
+export const useTodos = (): TodosContextType => {
   const context = useContext(TodosContext);
   if (!context) {
     throw new Error("useTodos must be used within a TodosProvider");
   }
   return context;
 };
-export const TodosProvider = ({ children }) => {
-  const todosReducer = (state, action) => {
+export const TodosProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const todosReducer = (state: Todo[], action: TodoAction): Todo[] => {
     switch (action.type) {
       case "ADD_TODO":
         return [...state, action.payload];

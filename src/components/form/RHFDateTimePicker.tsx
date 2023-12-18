@@ -1,4 +1,5 @@
 "use client";
+import React, { ChangeEvent } from "react";
 import { useFormContext } from "react-hook-form";
 import {
   FormControl,
@@ -19,6 +20,17 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
 
+interface RHFDateTimePickerProps {
+  title: string;
+  name: string;
+  description?: string;
+  inputClassName?: string;
+  placeholder?: string;
+  dateDisabled?: boolean;
+  isDateTime?: boolean;
+  fromDate?: Date;
+}
+
 export default function RHFDateTimePicker({
   title,
   name,
@@ -28,10 +40,10 @@ export default function RHFDateTimePicker({
   dateDisabled,
   isDateTime,
   fromDate,
-}) {
+}: RHFDateTimePickerProps) {
   const { control, getValues, setValue } = useFormContext();
 
-  const handleTimeChange = (e) => {
+  const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const [hours, minutes] = value.split(":").map(Number);
 

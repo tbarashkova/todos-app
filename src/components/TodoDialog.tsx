@@ -1,24 +1,38 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { format } from "date-fns";
 import { Toaster, toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import RHFTextarea from "@/components/form/RHFTextarea";
 import RHFInput from "@/components/form/RHFInput";
 import RHFDateTimePicker from "@/components/form/RHFDateTimePicker";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTodos } from "@/context/TodosProvider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Todo } from "@/context/TodosProvider";
+
+interface EditTodo extends Todo {
+  createdTime: Date;
+}
+
+interface TodoFormValues {
+  id?: string;
+  name: string;
+  description: string;
+  estimatedTime: Date;
+  comment: string;
+  updatedTime?: Date;
+}
+
+interface TodoDialogProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  todo: EditTodo;
+}
 
 const schema = yup
   .object({
@@ -39,22 +53,21 @@ const schema = yup
     estimatedTime: yup
       .date()
       .min(new Date(), "Must be future date")
-      .required("Required field. Please add date todo must be done"),
+      .required("Required field. Please add date task must be done"),
     comment: yup
       .string()
       .max(
         400,
         "The name of your todo is too long. Max number of characters is 400."
-      ),
+      )
+      .required("Required field. Please add comment of your task"),
   })
   .required();
 
-export default function TodoDialog({ open, setOpen, todo }) {
+export default function TodoDialog({ open, setOpen, todo }: TodoDialogProps) {
   const [isEditing, setIsEditing] = useState(false);
   const { dispatch } = useTodos();
   const { id } = todo;
-
-  console.log("todotodotodotodotodo", todo);
 
   const form = useForm({
     defaultValues: {
@@ -71,19 +84,18 @@ export default function TodoDialog({ open, setOpen, todo }) {
     form.reset({
       name: todo?.name || "",
       description: todo?.description || "",
-      estimatedTime: new Date(todo?.estimatedTime) || "",
+      estimatedTime: new Date(todo?.estimatedTime || ""),
       comment: todo?.comment || "",
     });
   }, [todo]);
 
-  function handleUpdate(data: any) {
-    console.log("data inside EDIT DIALOG", data);
+  const handleUpdate: SubmitHandler<TodoFormValues> = (data: any) => {
     data.id = id;
     data.updatedTime = new Date();
     dispatch({ type: "UPDATE_TODO", payload: data });
     toast.success("Todo is successfully updated");
     setIsEditing(false);
-  }
+  };
 
   function handleCancel() {
     setIsEditing(false);
@@ -143,6 +155,7 @@ export default function TodoDialog({ open, setOpen, todo }) {
                   <div>
                     Created:
                     <span className="ms-2">
+                      {/* eslint-disable-next-line */}
                       {format(new Date(todo.createdTime), "dd.MM.yyyy HH:mm")}
                     </span>
                   </div>
